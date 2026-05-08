@@ -1,0 +1,75 @@
+match_id,team_a,team_b,match_date,venue,match_type,tournament
+1,KKR,RCB,22-03-2026,"Eden Gardens, Kolkata",League,IPL 2026
+2,SRH,RR,23-03-2026,"Rajiv Gandhi International Stadium, Hyderabad",League,IPL 2026
+3,CSK,MI,23-03-2026,"MA Chidambaram Stadium, Chennai",League,IPL 2026
+4,DC,LSG,24-03-2026,"ACA-VDCA Cricket Stadium, Vishakhapatnam",League,IPL 2026
+5,GT,PBKS,25-03-2026,"Narendra Modi Stadium, Ahmedabad",League,IPL 2026
+6,RR,KKR,26-03-2026,"Barsapara Stadium, Guwahati",League,IPL 2026
+7,SRH,LSG,27-03-2026,"Rajiv Gandhi International Stadium, Hyderabad",League,IPL 2026
+8,CSK,RCB,28-03-2026,"MA Chidambaram Stadium, Chennai",League,IPL 2026
+9,GT,MI,29-03-2026,"Narendra Modi Stadium, Ahmedabad",League,IPL 2026
+10,DC,SRH,30-03-2026,"ACA-VDCA Cricket Stadium, Vishakhapatnam",League,IPL 2026
+11,RR,CSK,30-03-2026,"Barsapara Stadium, Guwahati",League,IPL 2026
+12,MI,KKR,31-03-2026,"Wankhede Stadium, Mumbai",League,IPL 2026
+13,LSG,PBKS,01-04-2026,"Ekana Cricket Stadium, Lucknow",League,IPL 2026
+14,RCB,GT,02-04-2026,"M. Chinnaswamy Stadium, Bangalore",League,IPL 2026
+15,KKR,SRH,03-04-2026,"Eden Gardens, Kolkata",League,IPL 2026
+16,LSG,MI,04-04-2026,"Ekana Cricket Stadium, Lucknow",League,IPL 2026
+17,CSK,DC,05-04-2026,"MA Chidambaram Stadium, Chennai",League,IPL 2026
+18,PBKS,RR,05-04-2026,"New PCA Cricket Stadium, Mullanpur",League,IPL 2026
+19,SRH,GT,06-04-2026,"Rajiv Gandhi International Stadium, Hyderabad",League,IPL 2026
+20,MI,RCB,07-04-2026,"Wankhede Stadium, Mumbai",League,IPL 2026
+21,KKR,LSG,08-04-2026,"Eden Gardens, Kolkata",League,IPL 2026
+22,PBKS,CSK,08-04-2026,"New PCA Cricket Stadium, Mullanpur",League,IPL 2026
+23,GT,RR,09-04-2026,"Narendra Modi Stadium, Ahmedabad",League,IPL 2026
+24,RCB,DC,10-04-2026,"M. Chinnaswamy Stadium, Bangalore",League,IPL 2026
+25,CSK,KKR,11-04-2026,"MA Chidambaram Stadium, Chennai",League,IPL 2026
+26,LSG,GT,12-04-2026,"Ekana Cricket Stadium, Lucknow",League,IPL 2026
+27,SRH,PBKS,12-04-2026,"Rajiv Gandhi International Stadium, Hyderabad",League,IPL 2026
+28,RR,RCB,13-04-2026,"Sawai Mansingh Stadium, Jaipur",League,IPL 2026
+29,DC,MI,13-04-2026,"Arun Jaitley Stadium, Delhi",League,IPL 2026
+30,LSG,CSK,14-04-2026,"Ekana Cricket Stadium, Lucknow",League,IPL 2026
+31,PBKS,KKR,15-04-2026,"New PCA Cricket Stadium, Mullanpur",League,IPL 2026
+32,DC,RR,16-04-2026,"Arun Jaitley Stadium, Delhi",League,IPL 2026
+33,MI,SRH,17-04-2026,"Wankhede Stadium, Mumbai",League,IPL 2026
+34,RCB,PBKS,18-04-2026,"M. Chinnaswamy Stadium, Bangalore",League,IPL 2026
+35,GT,DC,19-04-2026,"Narendra Modi Stadium, Ahmedabad",League,IPL 2026
+36,RR,LSG,19-04-2026,"Sawai Mansingh Stadium, Jaipur",League,IPL 2026
+37,PBKS,RCB,20-04-2026,"New PCA Cricket Stadium, Mullanpur",League,IPL 2026
+38,MI,CSK,20-04-2026,"Wankhede Stadium, Mumbai",League,IPL 2026
+39,KKR,GT,21-04-2026,"Eden Gardens, Kolkata",League,IPL 2026
+40,LSG,DC,22-04-2026,"Ekana Cricket Stadium, Lucknow",League,IPL 2026
+41,SRH,MI,23-04-2026,"Rajiv Gandhi International Stadium, Hyderabad",League,IPL 2026
+42,RCB,RR,24-04-2026,"M. Chinnaswamy Stadium, Bangalore",League,IPL 2026
+43,CSK,SRH,25-04-2026,"MA Chidambaram Stadium, Chennai",League,IPL 2026
+44,KKR,PBKS,26-04-2026,"Eden Gardens, Kolkata",League,IPL 2026
+45,MI,LSG,27-04-2026,"Wankhede Stadium, Mumbai",League,IPL 2026
+46,DC,RCB,27-04-2026,"Arun Jaitley Stadium, Delhi",League,IPL 2026
+47,RR,GT,28-04-2026,"Sawai Mansingh Stadium, Jaipur",League,IPL 2026
+48,DC,KKR,29-04-2026,"Arun Jaitley Stadium, Delhi",League,IPL 2026
+49,CSK,PBKS,30-04-2026,"MA Chidambaram Stadium, Chennai",League,IPL 2026
+50,RR,MI,01-05-2026,"Sawai Mansingh Stadium, Jaipur",League,IPL 2026
+51,GT,SRH,02-05-2026,"Narendra Modi Stadium, Ahmedabad",League,IPL 2026
+52,RCB,CSK,03-05-2026,"M. Chinnaswamy Stadium, Bangalore",League,IPL 2026
+53,KKR,RR,04-05-2026,"Eden Gardens, Kolkata",League,IPL 2026
+54,PBKS,LSG,04-05-2026,"HPCA Stadium, Dharamshala",League,IPL 2026
+55,SRH,DC,05-05-2026,"Rajiv Gandhi International Stadium, Hyderabad",League,IPL 2026
+56,MI,GT,06-05-2026,"Wankhede Stadium, Mumbai",League,IPL 2026
+57,KKR,CSK,07-05-2026,"Eden Gardens, Kolkata",League,IPL 2026
+58,RCB,KKR,17-05-2026,"M. Chinnaswamy Stadium, Bangalore",League,IPL 2026
+59,RR,PBKS,18-05-2026,"Sawai Mansingh Stadium, Jaipur",League,IPL 2026
+60,DC,GT,18-05-2026,"Arun Jaitley Stadium, Delhi",League,IPL 2026
+61,LSG,SRH,19-05-2026,"Ekana Cricket Stadium, Lucknow",League,IPL 2026
+62,CSK,RR,20-05-2026,"Arun Jaitley Stadium, Delhi",League,IPL 2026
+63,MI,DC,21-05-2026,"Wankhede Stadium, Mumbai",League,IPL 2026
+64,GT,LSG,22-05-2026,"Narendra Modi Stadium, Ahmedabad",League,IPL 2026
+65,RCB,SRH,23-05-2026,"Ekana Cricket Stadium, Lucknow",League,IPL 2026
+66,PBKS,DC,24-05-2026,"Sawai Mansingh Stadium, Jaipur",League,IPL 2026
+67,GT,CSK,25-05-2026,"Narendra Modi Stadium, Ahmedabad",League,IPL 2026
+68,KKR,SRH,25-05-2026,"Arun Jaitley Stadium, Delhi",League,IPL 2026
+69,PBKS,MI,26-05-2026,"Sawai Mansingh Stadium, Jaipur",League,IPL 2026
+70,LSG,RCB,27-05-2026,"Ekana Cricket Stadium, Lucknow",League,IPL 2026
+71,PBKS,RCB,29-05-2026,"New PCA Cricket Stadium, Mullanpur",Playoffs,IPL 2026
+72,GT,MI,30-05-2026,"New PCA Cricket Stadium, Mullanpur",Playoffs,IPL 2026
+73,PBKS,MI,01-06-2026,"Narendra Modi Stadium, Ahmedabad",Playoffs,IPL 2026
+74,RCB,PBKS,03-06-2026,"Narendra Modi Stadium, Ahmedabad",Final,IPL 2026
