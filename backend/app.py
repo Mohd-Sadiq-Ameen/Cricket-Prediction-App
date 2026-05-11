@@ -73,20 +73,16 @@ def load_past_matches():
     
     # If the CSV already has team names (old format), just fix date and return
     if 'team1' in df.columns and isinstance(df['team1'].iloc[0], str):
-        # Old format: convert date if needed
         if 'date' not in df.columns and 'match_date' in df.columns:
             df.rename(columns={'match_date': 'date'}, inplace=True)
         if 'winner' not in df.columns and 'match_winner' in df.columns:
             df.rename(columns={'match_winner': 'winner'}, inplace=True)
-        # Convert date to datetime
         df['date_obj'] = pd.to_datetime(df['date'], errors='coerce')
-        # Convert season to integer if exists
         if 'season' in df.columns:
             df['season'] = pd.to_numeric(df['season'], errors='coerce')
         return df
     
     # New format (numeric team IDs)
-    # Load team mapping
     team_map_path = 'data/teams.csv'
     if not os.path.exists(team_map_path):
         print("❌ teams.csv not found. Please create it with columns: team_id,team_name")
@@ -94,23 +90,14 @@ def load_past_matches():
     teams_df = pd.read_csv(team_map_path)
     team_dict = dict(zip(teams_df['team_id'], teams_df['team_name']))
     
-    # Rename columns to match old expectations
     df.rename(columns={'match_date': 'date', 'match_winner': 'winner'}, inplace=True)
-    
-    # Convert numeric team IDs to names
     df['team1'] = df['team1'].map(team_dict)
     df['team2'] = df['team2'].map(team_dict)
     df['winner'] = df['winner'].map(team_dict)
-    
-    # Drop rows where mapping failed (unknown team ID)
     df = df.dropna(subset=['team1', 'team2', 'winner'])
-    
-    # Convert date to datetime
     df['date_obj'] = pd.to_datetime(df['date'], errors='coerce')
-    # Convert season to integer if present
     if 'season' in df.columns:
         df['season'] = pd.to_numeric(df['season'], errors='coerce')
-    
     return df
 
 # ---------- AUTH ----------
@@ -141,31 +128,41 @@ def login():
     conn.close()
     if not user or not bcrypt.check_password_hash(user['password'], password):
         return jsonify({'error': 'Invalid credentials'}), 401
-    access_token = create_access_token(identity=user['id'])
+    access_token = create_access_token(identity=str(user['id']))   # <-- convert to string
     return jsonify({'token': access_token, 'username': username}), 200
-
 # ---------- PREDICTION ----------
 @app.route('/api/predict', methods=['POST'])
+@jwt_required()
 def predict():
     data = request.json
     team_a = data.get('team_a')
     team_b = data.get('team_b')
     match_date = data.get('match_date', '')
+    user_id = int(get_jwt_identity())   # <-- convert to int
     
     df = load_past_matches()
     if df is None:
         winner = team_a if team_a < team_b else team_b
         reason = f"Historical data not available. Based on team standings, {winner} is favored."
+        try:
+            conn = get_db()
+            conn.execute('''INSERT INTO predictions (user_id, team_a, team_b, predicted_winner, prediction_date, match_date)
+                            VALUES (?, ?, ?, ?, ?, ?)''',
+                         (user_id, team_a, team_b, winner, datetime.now().isoformat(), match_date))
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            print("Skipping save prediction:", e)
         return jsonify({'winner': winner, 'reason': reason})
     
-    # 1. Head‑to‑head (last 5 matches) – use date_obj for sorting
+    # Head‑to‑head (last 5 matches)
     h2h = df[((df['team1'] == team_a) & (df['team2'] == team_b)) |
              ((df['team1'] == team_b) & (df['team2'] == team_a))]
     h2h_recent = h2h.sort_values('date_obj', ascending=False).head(5)
     team_a_h2h_wins = len(h2h_recent[h2h_recent['winner'] == team_a])
     team_b_h2h_wins = len(h2h_recent[h2h_recent['winner'] == team_b])
     
-    # 2. Recent form (last 5 matches of each team)
+    # Recent form (last 5 matches)
     def get_recent_form(team, df, n=5):
         team_matches = df[(df['team1'] == team) | (df['team2'] == team)]
         team_matches = team_matches.sort_values('date_obj', ascending=False).head(n)
@@ -178,7 +175,7 @@ def predict():
     form_a_pct = (form_a_wins / form_a_total * 100) if form_a_total > 0 else 0
     form_b_pct = (form_b_wins / form_b_total * 100) if form_b_total > 0 else 0
     
-    # 3. Overall win percentage (for tiebreaker)
+    # Overall win percentage
     def overall_win_pct(team, df):
         played = df[(df['team1'] == team) | (df['team2'] == team)]
         wins = len(played[played['winner'] == team])
@@ -188,7 +185,7 @@ def predict():
     overall_a = overall_win_pct(team_a, df)
     overall_b = overall_win_pct(team_b, df)
     
-    # Decision logic (no random)
+    # Decision logic
     if team_a_h2h_wins + team_b_h2h_wins >= 3:
         if team_a_h2h_wins > team_b_h2h_wins:
             winner = team_a
@@ -231,11 +228,9 @@ def predict():
                 winner = team_a if team_a < team_b else team_b
                 reason = f"All metrics are equal. Historical precedence favors {winner}."
     
-    # Save prediction
+    # Save prediction with user_id from token
     try:
         conn = get_db()
-        user = conn.execute('SELECT id FROM users LIMIT 1').fetchone()
-        user_id = user['id'] if user else 1
         conn.execute('''INSERT INTO predictions (user_id, team_a, team_b, predicted_winner, prediction_date, match_date)
                         VALUES (?, ?, ?, ?, ?, ?)''',
                      (user_id, team_a, team_b, winner, datetime.now().isoformat(), match_date))
@@ -247,13 +242,19 @@ def predict():
     return jsonify({'winner': winner, 'reason': reason})
 
 @app.route('/api/my_predictions', methods=['GET'])
+@jwt_required()
 def my_predictions():
+    user_id = int(get_jwt_identity())   # <-- convert to int
     try:
         conn = get_db()
-        rows = conn.execute('SELECT team_a, team_b, predicted_winner, prediction_date, match_date FROM predictions ORDER BY prediction_date DESC').fetchall()
+        rows = conn.execute('''SELECT team_a, team_b, predicted_winner, prediction_date, match_date
+                               FROM predictions
+                               WHERE user_id = ?
+                               ORDER BY prediction_date DESC''', (user_id,)).fetchall()
         conn.close()
         return jsonify([dict(row) for row in rows])
-    except:
+    except Exception as e:
+        print("Error fetching predictions:", e)
         return jsonify([])
 
 # ---------- FIXTURES & STATS ----------
@@ -295,10 +296,8 @@ def team_detail():
     if df is None:
         return jsonify({'error': 'No data file'}), 404
     
-    # Apply year filter if provided
     if from_year is not None and to_year is not None:
         if 'season' in df.columns:
-            # Ensure season is numeric
             df['season'] = pd.to_numeric(df['season'], errors='coerce')
             df = df[(df['season'] >= from_year) & (df['season'] <= to_year)]
         elif 'date_obj' in df.columns:
@@ -315,7 +314,6 @@ def team_detail():
     losses = total - wins - ties - no_result
     win_percentage = (wins / total * 100) if total > 0 else 0
     
-    # Use date_obj for sorting
     played_sorted = played.sort_values('date_obj', ascending=False)
     last5 = []
     for _, row in played_sorted.head(5).iterrows():
@@ -351,10 +349,8 @@ def head_to_head_detailed():
     if df is None:
         return jsonify({'error': 'No data file'}), 404
     
-    # Make a copy to avoid modifying the cached df
     df_filtered = df.copy()
     
-    # Apply year filter if provided
     if from_year is not None and to_year is not None:
         if 'season' in df_filtered.columns:
             df_filtered['season'] = pd.to_numeric(df_filtered['season'], errors='coerce')
@@ -362,7 +358,6 @@ def head_to_head_detailed():
         elif 'date_obj' in df_filtered.columns:
             df_filtered = df_filtered[(df_filtered['date_obj'].dt.year >= from_year) & (df_filtered['date_obj'].dt.year <= to_year)]
     
-    # Filter matches between the two selected teams
     matches = df_filtered[((df_filtered['team1'] == teamA) & (df_filtered['team2'] == teamB)) |
                           ((df_filtered['team1'] == teamB) & (df_filtered['team2'] == teamA))]
     total = len(matches)
@@ -372,9 +367,8 @@ def head_to_head_detailed():
     
     teamA_wins = len(matches[matches['winner'] == teamA])
     teamB_wins = len(matches[matches['winner'] == teamB])
-    ties = 0  # IPL data does not usually have ties, but you can adjust if needed
+    ties = 0
     
-    # Most recent 5 encounters
     matches_sorted = matches.sort_values('date_obj', ascending=False)
     last5 = []
     for _, row in matches_sorted.head(5).iterrows():
@@ -391,21 +385,19 @@ def head_to_head_detailed():
         'ties': ties,
         'last5': last5
     })
+
 @app.route('/api/seasons', methods=['GET'])
 def get_seasons():
     df = load_past_matches()
     if df is None:
         return jsonify({'min_year': 2008, 'max_year': 2025, 'years': list(range(2008, 2026))})
-    # Try to get years from season column or date_obj
     if 'season' in df.columns:
-        # Convert to numeric, drop NaN
         years = pd.to_numeric(df['season'], errors='coerce').dropna().unique()
         years = sorted(years)
     elif 'date_obj' in df.columns:
         years = sorted(df['date_obj'].dt.year.dropna().unique())
     else:
         years = [2008, 2025]
-    # Ensure min and max are integers
     min_year = int(min(years))
     max_year = int(max(years))
     return jsonify({'min_year': min_year, 'max_year': max_year, 'years': list(range(min_year, max_year+1))})

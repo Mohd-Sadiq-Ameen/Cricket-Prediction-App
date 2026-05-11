@@ -1,27 +1,27 @@
 // Login.jsx
 
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../api';
-import { ArrowRight, Sun, Moon } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { login } from "../api";
+import { ArrowRight, Sun, Moon } from "lucide-react";
 
 export default function Login({ setIsAuthenticated }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Theme
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('theme') !== 'light';
+    return localStorage.getItem("theme") !== "light";
   });
 
   useEffect(() => {
     if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
 
@@ -34,16 +34,16 @@ export default function Login({ setIsAuthenticated }) {
       setLoading(true);
 
       const res = await login({ username, password });
-
-      localStorage.setItem('token', res.data.token);
+      console.log("Login response:", res.data); // <-- add this
+      localStorage.setItem("token", res.data.token);
 
       if (setIsAuthenticated) {
         setIsAuthenticated(true);
       }
 
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      alert('Login failed: ' + (err.response?.data?.error || err.message));
+      alert("Login failed: " + (err.response?.data?.error || err.message));
     } finally {
       setLoading(false);
     }
@@ -130,14 +130,14 @@ export default function Login({ setIsAuthenticated }) {
               disabled={loading}
               className="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-xl shadow-amber-500/20"
             >
-              {loading ? 'Signing In...' : 'Login'}
+              {loading ? "Signing In..." : "Login"}
               {!loading && <ArrowRight size={18} />}
             </button>
           </form>
 
           {/* Bottom */}
           <div className="mt-8 text-center text-slate-600 dark:text-slate-400 text-sm">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <Link
               to="/signup"
               className="text-amber-500 hover:text-amber-400 font-semibold transition"
